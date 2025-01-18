@@ -11,7 +11,7 @@ from typing import Optional, Dict, List
 class VideoAnnotator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Video Snippet Annotator (VAX/Prism)")
+        self.root.title("Video Annotator V2")
 
         # State variables
         self.video_files: List[str] = []
@@ -29,6 +29,11 @@ class VideoAnnotator:
         self.setup_ui()
 
     def setup_ui(self):
+        # Bind keyboard events
+        self.root.bind('<Left>', lambda e: self.prev_video())
+        self.root.bind('<Right>', lambda e: self.next_video())
+        self.root.bind('<Return>', lambda e: self.next_video())
+
         # Toolbar
         toolbar = ttk.Frame(self.root)
         toolbar.pack(fill=tk.X, padx=5, pady=5)
@@ -73,6 +78,13 @@ class VideoAnnotator:
         self.status_label = ttk.Label(self.root, text="No folder selected")
         self.status_label.pack(pady=5)
 
+        # Clean labels button
+        ttk.Button(
+            self.root,
+            text="Clean Labels",
+            command=self.clean_labels
+        ).pack(pady=5)
+
         # Labels frame
         labels_frame = ttk.Frame(self.root)
         labels_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -112,6 +124,10 @@ class VideoAnnotator:
         try:
             with open(self.labels_file, 'r') as f:
                 self.labels_data = json.load(f)
+                # Convert existing single labels to lists
+                for key in self.labels_data:
+                    if isinstance(self.labels_data[key], str):
+                        self.labels_data[key] = [self.labels_data[key]]
         except FileNotFoundError:
             self.labels_data = {}
 
@@ -217,16 +233,17 @@ class VideoAnnotator:
 
     def update_labels(self):
         current_video = self.video_files[self.current_video_idx]
-        current_label = self.labels_data.get(current_video)
+        current_labels = self.labels_data.get(current_video, [])
 
         for label, btn in self.label_buttons.items():
-            if current_label == label:
+            if label in current_labels:
                 btn.configure(style='Selected.TButton')
-                self.current_label.config(text=f"Current Label: {label}")
             else:
                 btn.configure(style='TButton')
 
-        if current_label is None:
+        if current_labels:
+            self.current_label.config(text=f"Current Labels: {', '.join(current_labels)}")
+        else:
             self.current_label.config(text="No Label")
 
     def apply_label(self, label: str):
@@ -234,9 +251,26 @@ class VideoAnnotator:
             return
 
         current_video = self.video_files[self.current_video_idx]
-        self.labels_data[current_video] = label
+        if current_video not in self.labels_data:
+            self.labels_data[current_video] = []
+
+        if label in self.labels_data[current_video]:
+            self.labels_data[current_video].remove(label)
+        else:
+            self.labels_data[current_video].append(label)
+
         self.save_labels()
-        self.next_video()
+        self.update_labels()
+
+    def clean_labels(self):
+        if not self.video_files:
+            return
+
+        current_video = self.video_files[self.current_video_idx]
+        if current_video in self.labels_data:
+            del self.labels_data[current_video]
+            self.save_labels()
+            self.update_labels()
 
     def next_video(self):
         if not self.video_files:

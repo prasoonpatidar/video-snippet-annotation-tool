@@ -1,52 +1,84 @@
-# Video Snippet Annotator Tool (Usage)
+# Video Snippet Annotator Tool
 
-A Python-based tool for efficient video annotation with customizable labels for videos in a given directory.
+A Python tool for efficient multi-label video annotation with keyboard controls and filtering capabilities.
 
-### Installation
+## Installation
 
 ```bash
-# Install dependencies
 pip install opencv-python pillow
 ```
 
-### Configuration
+## Quick Start
 
-1. Create `label_definitions.json` in the tool directory:
+1. Configure labels in `label_definitions.json`:
 ```json
 [
-    "Label 1",
-    "Label 2",
-    "Label 3",
-    "Label 4",
-    "Label 5"
+    "Walking",
+    "Running",
+    "Sitting",
+    "Standing",
+    "Jumping"
 ]
 ```
 
-2. The tool will create `labels.json` automatically to store annotations.
-
-### Usage
-
-1. Run the tool:
+2. Launch:
 ```bash
-python video_annotator.py
+python video_annotator_v2.py
 ```
 
-2. Interface Elements:
-   - Select Folder: Choose directory containing videos
-   - Filter: Enter prefix to filter video files
-   - Video Player: 16:9 ratio video display
-   - Navigation: Previous/Next buttons and direct video selection
-   - Label Buttons: Click to apply label and auto-advance
-   - Status Bar: Shows current video information
+## Features
 
-### File Management
+- Multi-label support with toggle functionality
+- Filename prefix filtering
+- Direct video selection dropdown
+- FPS-controlled 16:9 playback
+- Automatic label saving
+- Keyboard navigation
 
-- Supported formats: .mp4, .avi, .mov
-- Labels stored in labels.json:
+## Controls
+
+### Keyboard
+- `←` Previous video
+- `→` or `Enter` Next video
+- `Space` Pause/Play
+
+### Mouse
+- Click labels to toggle on/off
+- "Clean Labels" removes all labels from current video
+- Filter textbox for prefix search
+- Video dropdown for direct navigation
+
+## Data Storage
+
+Labels are automatically saved in `labels.json`:
 ```json
 {
-    "video1.mp4": "Label 1",
-    "video2.mp4": "Label 2"
+    "video1.mp4": ["Walking", "Running"],
+    "video2.mp4": ["Sitting"]
 }
 ```
 
+## Interface Guide
+
+1. **Top Bar**
+   - "Select Folder" opens video directory
+   - Filter box for filename search
+   - Apply/Clear filter buttons
+
+2. **Video Display**
+   - 16:9 aspect ratio playback
+   - Current label display below video
+   - Navigation controls
+
+3. **Label Section**
+   - Toggle buttons for each label
+   - Green highlight for active labels
+   - "Clean Labels" button
+
+## Tips
+
+- Use keyboard shortcuts for faster navigation
+- Filter large directories with filename prefix
+- Multiple labels can be applied per video
+- Labels auto-save on every change
+- Clean Labels resets to "No Label" state

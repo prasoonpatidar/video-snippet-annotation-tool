@@ -1,76 +1,160 @@
-# # Video Snippet Annotator Tool (Implementation)
+# Video Snippet Annotator Tool (Implementation Details)
 
-## Technical Details
+## Architecture Overview
 
-### Architecture
+### Core Components
 
-- Built using Tkinter for GUI
-- OpenCV for video processing
-- Controlled FPS playback (30 FPS target)
-- Memory-efficient video handling
+1. `VideoAnnotator` Class
+   - Main application class
+   - Handles UI, video processing, and label management
+   - Implements event-driven architecture
 
-### Key Components
+2. File Management
+   - JSON-based configuration and storage
+   - Dynamic file filtering
+   - Memory-efficient video handling
 
-1. Video Processing:
-   - Frame timing control
-   - Resource cleanup
-   - 16:9 aspect ratio maintenance
-   - Automatic memory management
+3. UI Components
+   - Tkinter-based interface
+   - OpenCV video processing
+   - Controlled frame rate display
 
-2. Data Management:
-   - JSON-based label storage
-   - Dynamic label configuration
-   - Filtered file management
-   - Prefix-based search
+## Application Flow
 
-3. UI Components:
-   - Responsive video playback
-   - Real-time label updates
-   - Direct video selection
-   - Status tracking
+1. Initialization
+   ```
+   Load label definitions
+   ↓
+   Setup UI components
+   ↓
+   Initialize state variables
+   ↓
+   Bind keyboard events
+   ```
 
-### Implementation Notes
+2. Video Loading
+   ```
+   Select folder
+   ↓
+   Filter videos (if prefix set)
+   ↓
+   Update video selection dropdown
+   ↓
+   Load first video
+   ↓
+   Start playback loop
+   ```
 
-1. Video Handling:
-```python
-def update_video_frame(self):
-    current_time = time.time()
-    elapsed = current_time - self.last_frame_time
-    
-    if elapsed < self.frame_delay:
-        self.root.after(int((self.frame_delay - elapsed) * 1000))
-        return
+3. Label Management
+   ```
+   Load existing labels
+   ↓
+   Update UI state
+   ↓
+   Handle label toggling
+   ↓
+   Save to JSON
+   ```
+
+## Class Methods Documentation
+
+### Core Methods
+
+#### `__init__(self, root)`
+- Initializes application state
+- Sets up UI components
+- Configures keyboard bindings
+
+#### `setup_ui(self)`
+- Creates all UI elements
+- Configures layouts
+- Sets up event bindings
+
+### Video Handling
+
+#### `play_current_video(self)`
+- Opens video file
+- Initializes playback
+- Sets up frame timing
+- Updates UI state
+
+#### `update_video_frame(self)`
+- Controls frame rate
+- Handles frame resizing
+- Manages memory efficiently
+- Implements playback loop
+
+### Label Management
+
+#### `load_labels(self)`
+- Reads labels.json
+- Converts legacy format
+- Initializes label state
+
+#### `apply_label(self, label: str)`
+- Toggles label state
+- Updates UI
+- Saves changes
+- Handles multi-label logic
+
+#### `clean_labels(self)`
+- Removes all labels
+- Updates UI state
+- Saves changes
+
+### Navigation
+
+#### `next_video(self)/prev_video(self)`
+- Handles video transitions
+- Updates UI state
+- Manages resources
+- Called by keyboard/button events
+
+### File Management
+
+#### `filter_videos(self)`
+- Applies prefix filter
+- Updates video list
+- Handles file validation
+- Updates UI state
+
+## Performance Considerations
+
+### Memory Management
+- Video cleanup on transitions
+- Controlled frame buffer
+- Resource release protocols
+
+### UI Responsiveness
+- Frame rate control
+- Asynchronous updates
+- Event-driven design
+
+### File Operations
+- Lazy loading
+- Efficient JSON handling
+- Optimized file filtering
+
+## Data Structures
+
+### Label Storage
+```json
+{
+    "video_file.mp4": ["Label1", "Label2"],
+    "another_video.mp4": ["Label3"]
+}
 ```
 
-2. Memory Management:
+### State Variables
 ```python
-def cleanup_video(self):
-    if self.cap is not None:
-        self.cap.release()
-        self.cap = None
+self.video_files: List[str]
+self.labels_data: Dict[str, List[str]]
+self.current_video_idx: int
 ```
 
-3. Label System:
-```python
-def apply_label(self, label: str):
-    current_video = self.video_files[self.current_video_idx]
-    self.labels_data[current_video] = label
-    self.save_labels()
-```
+## Error Handling
 
-### Performance Considerations
-
-1. Resource Management:
-   - Video cleanup on transitions
-   - Frame buffer management
-   - Controlled refresh rate
-
-2. File Operations:
-   - Lazy loading of videos
-   - Filtered file indexing
-   - Efficient JSON storage
-
-3. UI Responsiveness:
-   - Asynchronous video updates
-   - Optimized frame resizing
-   - Event-driven architecture
+- Invalid file handling
+- Resource cleanup
+- User input validation
+- File operation safety
