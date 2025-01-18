@@ -1,1 +1,22 @@
-["Label 1", "Label 2", "Label 3", "Label 4", "Label 5", "Label 6", "Label 7", "Label 8", "Label 9", "Label 10"]
+[
+  "coffee machine operation",
+ "pouring coffee",
+ "kettle usage/water heating",
+ "pouring tea",
+ "food preparation/cooking",
+ "handling/preparing cereal",
+ "preparing spread",
+ "handling containers/dishes",
+ "cleaning counter/surface",
+ "cabinet/drawer interaction",
+ "placing/retrieving items",
+ "eating with utensils/food",
+ "eating sandwich",
+ "eating biscuits",
+ "drinking from cup/mug",
+ "waiting/sitting",
+ "freezer/fridge interaction",
+ "dish/hand washing",
+ "paper towel/soap usage",
+ "other"
+]
